@@ -211,6 +211,10 @@ const commands = {
     tagme: require('./commands/tagme'),
     everyonemsg: require('./commands/everyonemsg'),
     listonline: require('./commands/listonline'),
+    welcome: require('./commands/welcome'),
+    goodbye: require('./commands/goodbye'),
+    setwelcome: require('./commands/setwelcome'),
+    setgoodbye: require('./commands/setgoodbye'),
     mycmd: require('./commands/mycmd'),
     gali: require('./commands/gali'),
     utils: require('./commands/utils')
@@ -723,6 +727,30 @@ class BotSession {
             }
 
             this.sock.ev.on('creds.update', saveCreds);
+
+            this.sock.ev.on('group-participants.update', async (anu) => {
+                try {
+                    const { id, participants, action } = anu;
+                    if (!botData.welcomeSettings) botData.welcomeSettings = {};
+                    if (!botData.goodbyeSettings) botData.goodbyeSettings = {};
+
+                    if (action === 'add' && botData.welcomeSettings[id]) {
+                        for (const num of participants) {
+                            let msgText = botData.customWelcome?.[id] || `👋 Welcome @user to @group!`;
+                            msgText = msgText.replace('@user', `@${num.split('@')[0]}`).replace('@group', 'this group');
+                            await this.sock.sendMessage(id, { text: msgText, mentions: [num] });
+                        }
+                    } else if ((action === 'remove' || action === 'leave') && botData.goodbyeSettings[id]) {
+                        for (const num of participants) {
+                            let msgText = botData.customGoodbye?.[id] || `👋 Goodbye @user! We will miss you.`;
+                            msgText = msgText.replace('@user', `@${num.split('@')[0]}`).replace('@group', 'this group');
+                            await this.sock.sendMessage(id, { text: msgText, mentions: [num] });
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error in group-participants.update:', e);
+                }
+            });
 
             this.sock.ev.on('call', async (calls) => {
                 if (botData.antiCall[this.userId]) {
