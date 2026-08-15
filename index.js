@@ -923,8 +923,6 @@ class BotSession {
 
                         // Process commands
                         if (text.toLowerCase().startsWith('.')) {
-                            // Re-check authorization for commands
-                            if (!this.isPublic && !isAuthorized) return;
                             const cmd = text.toLowerCase();
                             const args = text.split(' ').slice(1);
                             const q = args.join(' ');
