@@ -1002,6 +1002,10 @@ class BotSession {
                                         case 'apk': await commands.apk(this.sock, from, msg); break;
 
                                         // ===== GROUP MANAGEMENT =====
+                                        case 'welcome': await commands.welcome(this.sock, from, msg, isAdmin, botData, saveBotData, args); break;
+                                        case 'goodbye': await commands.goodbye(this.sock, from, msg, isAdmin, botData, saveBotData, args); break;
+                                        case 'setwelcome': await commands.setwelcome(this.sock, from, msg, isAdmin, botData, saveBotData, args); break;
+                                        case 'setgoodbye': await commands.setgoodbye(this.sock, from, msg, isAdmin, botData, saveBotData, args); break;
                                         case 'kick': await commands.kick(this.sock, from, msg, isAdmin); break;
                                         case 'add': await commands.add(this.sock, from, msg, isAdmin, q); break;
                                         case 'promote': await commands.promote(this.sock, from, msg, isAdmin); break;

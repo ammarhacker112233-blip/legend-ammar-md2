@@ -1,4 +1,7 @@
-module.exports = async (sock, from, args, msg, botData) => {
+module.exports = async (sock, from, msg, isAdmin, botData, saveBotData, args) => {
+    if (!isAdmin || !from.endsWith('@g.us')) {
+        return await sock.sendMessage(from, { text: '❌ Only admins can use this command in groups.' }, { quoted: msg });
+    }
     if (!botData.customWelcome) botData.customWelcome = {};
     if (!botData.welcomeSettings) botData.welcomeSettings = {};
     const text = args.join(' ');
@@ -7,5 +10,6 @@ module.exports = async (sock, from, args, msg, botData) => {
     }
     botData.customWelcome[from] = text;
     botData.welcomeSettings[from] = true;
+    saveBotData();
     await sock.sendMessage(from, { text: `✅ *Custom welcome message set successfully!*\n\n*Message:* ${text}` }, { quoted: msg });
 };
